@@ -1,0 +1,43 @@
+# SPDX-FileCopyrightText: 2024 Thomas Breitner
+#
+# SPDX-License-Identifier: MIT
+
+[build-system]
+requires = [
+    "setuptools>=61.0.0",
+    "setuptools-scm>=8.0",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mkdocs-translate-plugin"
+version = "0.0.1"
+description = "MkDocs plugin that does the translation of your markdown pages for you"
+authors = [{name = "Thomas Breitner", email = "mail@thms.de"},]
+license = {file = "LICENSES/MIT.txt"}
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Framework :: MkDocs",
+    "Topic :: Documentation",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Development Status :: 3 - Alpha",
+]
+
+dependencies = [
+    "mkdocs>=1.6",
+    "mkdocs-material>=7.0",
+    "mkdocs-static-i18n>=1.2.3",
+    "deepl",
+    "openai",
+    "requests",
+    "pypandoc"
+]
+
+[project.entry-points."mkdocs.plugins"]
+translate = "mkdocs_translate_plugin.plugin:TranslatePlugin"
+
+[tool.setuptools]
+license-files = ["LICENSES/*.txt"]

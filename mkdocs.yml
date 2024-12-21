@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2024 Thomas Breitner
+#
+# SPDX-License-Identifier: CC0-1.0
+
+site_name: mkdocs-translate-plugin
+theme:
+  name: material
+plugins:
+  - search
+  - translate:
+      # Currently supported translation services: openai, deepl, simpleen
+      translation_service: simpleen
+      translation_service_api_key: !ENV TRANSLATION_SERVICE_API_KEY
+  - i18n:
+      docs_structure: suffix
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: de
+          name: Deutsch
+          build: true
+        # - locale: fr
+        #   name: Francais
+        #   build: true
