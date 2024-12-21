@@ -94,6 +94,7 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
                             source_lang=i18n_plugin.default_language,
                             target_lang=lang,
                         )
+
                         if translated_content:
                             new_path = filepath.parent / target_filename
                             new_path.write_text(translated_content, encoding="utf-8")

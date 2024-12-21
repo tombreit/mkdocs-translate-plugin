@@ -13,11 +13,13 @@ def translate_content(config, content: str, source_lang: str, target_lang: str) 
     """
     translation_func_name = f"translate_with_{config.translation_service.lower()}"
     translation_func = getattr(sys.modules[__name__], translation_func_name)
-    translation_func(config, content, source_lang, target_lang)
+
+    return translation_func(config, content, source_lang, target_lang)
 
 
 def translate_with_simpleen(config, content, source_lang, target_lang):
     """Translate content using Simpleen API"""
+    translated_text = None
 
     url = f"https://api.simpleen.io/translate?auth_key={config.translation_service_api_key}"
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
@@ -33,11 +35,14 @@ def translate_with_simpleen(config, content, source_lang, target_lang):
         response = requests.post(url, headers=headers, json=payload)
         response.raise_for_status()  # Raise an exception for HTTP errors
         translated_text = response.text
-        return translated_text
     except requests.exceptions.RequestException as e:
         raise Exception(f"Simpleen API request failed: {str(e)}")
     except json.JSONDecodeError as e:
         raise ValueError(f"Invalid JSON response: {str(e)}")
+    except Exception as e:
+        raise Exception(f"Translation error: {str(e)}")
+
+    return translated_text
 
 
 def translate_with_openai(
