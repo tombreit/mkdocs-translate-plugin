@@ -28,7 +28,11 @@ Don't feel like translating?
 *Currently only available via it's git repository.*
 
 ```bash
+# Initial install:
 python -m pip install 'mkdocs-translate-plugin @ git+https://github.com/tombreit/mkdocs-translate-plugin'
+
+# Upgrade plugin:
+python -m pip install --upgrade --no-deps --force-reinstall 'mkdocs-translate-plugin @ git+https://github.com/tombreit/mkdocs-translate-plugin'
 ```
 
 This should install some requirements. See [`pyproject.toml`](https://github.com/tombreit/mkdocs-translate-plugin/blob/main/pyproject.toml) for details.
