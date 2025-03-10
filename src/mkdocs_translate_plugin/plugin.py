@@ -14,12 +14,12 @@ import mkdocs
 from .translation_services import translate_content
 
 
-log = mkdocs.plugins.get_plugin_logger(__name__)
+logger = mkdocs.plugins.get_plugin_logger(__name__)
 
 
 class TranslatePluginConfig(mkdocs.config.base.Config):
     translation_service = mkdocs.config.config_options.Choice(
-        choices=["simpleen", "deepl", "openai"]
+        choices=["simpleen", "deepl", "chatai"]
     )
     translation_service_api_key = mkdocs.config.config_options.Type(str)
 
@@ -37,7 +37,9 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
         """Translate files before build process starts"""
 
         if self.is_serve:
-            log.info("Plugin deactivated during `serve`. Only active during `build`.")
+            logger.info(
+                "Plugin deactivated during `serve`. Only active during `build`."
+            )
             return
 
         # Current run language. The mkdocs-static-i18n processes the
@@ -47,7 +49,7 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
         current_language = config.theme.get("language")
 
         if current_language != i18n_plugin.default_language:
-            log.debug(
+            logger.debug(
                 f"Skipping on_pre_build hook: language '{current_language}' is not default language '{i18n_plugin.default_language}'"
             )
             return
@@ -66,7 +68,7 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
             rel_filepath = filepath.relative_to(docs_dir.parent)
 
             if rel_filepath.name.endswith(source_language_suffix):
-                log.info(
+                logger.info(
                     f"Source language file: {rel_filepath.name}, checking for translations..."
                 )
 
@@ -80,11 +82,11 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
                     target_filepath = filepath.parent / target_filename
 
                     if target_filepath.exists():
-                        log.info(
+                        logger.info(
                             f"Translation file already exists: {target_filepath.name}. Skipping..."
                         )
                     else:
-                        log.info(
+                        logger.info(
                             f"[🔥] Translating {rel_filepath.name} to {target_filepath.name}..."
                         )
                         source_content = filepath.read_text(encoding="utf-8")
@@ -99,6 +101,6 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
                             new_path = filepath.parent / target_filename
                             new_path.write_text(translated_content, encoding="utf-8")
                         else:
-                            log.warning(
+                            logger.warning(
                                 f"Translation failed for {rel_filepath.name} to {target_filename}"
                             )

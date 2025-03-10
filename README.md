@@ -79,7 +79,12 @@ This should install some requirements. See [`pyproject.toml`](https://github.com
     - [DeepL API](https://www.deepl.com/en/pro#developer)
     - [Academic Cloud AI chatbot](https://academiccloud.de/services/chatai/)
 
-1. Export the API key as an environment variable and set corresponding translation provider (see Configuration section above)
+1. Export the API key as an environment variable and set corresponding translation provider (see Configuration section above):
+
+    ```sh
+    export TRANSLATION_SERVICE_API_KEY=secret
+    ```
+
 
 1. Validate current EN-only docs
 

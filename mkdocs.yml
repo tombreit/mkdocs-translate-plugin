@@ -8,8 +8,8 @@ theme:
 plugins:
   - search
   - translate:
-      # Currently supported translation services: openai, deepl, simpleen
-      translation_service: simpleen
+      # Currently supported translation services: chatai, deepl, simpleen
+      translation_service: chatai
       translation_service_api_key: !ENV TRANSLATION_SERVICE_API_KEY
   - i18n:
       docs_structure: suffix

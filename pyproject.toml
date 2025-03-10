@@ -33,7 +33,8 @@ dependencies = [
     "deepl",
     "openai",
     "requests",
-    "pypandoc"
+    "pypandoc",
+    "markdownify",
 ]
 
 [project.entry-points."mkdocs.plugins"]
