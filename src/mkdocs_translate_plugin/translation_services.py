@@ -124,7 +124,7 @@ def translate_with_chatai(
 
     def replace_code_block(match):
         code_blocks.append(match.group(0))
-        return f"CODEBLOCK_{len(code_blocks)-1}_PLACEHOLDER"
+        return f"CODEBLOCK_{len(code_blocks) - 1}_PLACEHOLDER"
 
     # Replace code blocks with placeholders
     content_with_placeholders = re.sub(pattern, replace_code_block, content)
@@ -146,6 +146,7 @@ def translate_with_chatai(
         "\n10. DO NOT add or remove any markdown elements or structure"
         "\n11. DO NOT translate content inside placeholders marked as CODEBLOCK_X_PLACEHOLDER"
         "\n12. ALWAYS maintain the exact same document structure"
+        "\n13. ALWAYS end the translated content with blank line"
         "\n\nThis is critically important documentation that must maintain its exact structure."
     )
 
@@ -170,7 +171,7 @@ def translate_with_chatai(
 
     for model in models:
         try:
-            logger.info(f"Attempting translation with model: {model}")
+            logger.debug(f"Attempting translation with model: {model}")
 
             chat_completion = client.chat.completions.create(
                 model=model,
@@ -183,7 +184,7 @@ def translate_with_chatai(
             )
 
             translated_text = chat_completion.choices[0].message.content
-            logger.info(f"Successfully translated with model: {model}")
+            logger.debug(f"Successfully translated with model: {model}")
             break
 
         except Exception as e:

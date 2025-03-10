@@ -8,6 +8,7 @@ MkDocs Translate Plugin
 
 from pathlib import Path
 from typing import Literal
+import re
 
 import mkdocs
 
@@ -32,6 +33,49 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
         self, *, command: Literal["build", "gh-deploy", "serve"], dirty: bool
     ) -> None:
         self.is_serve = command == "serve"
+
+    def add_translation_notice(
+        self, content: str, source_lang: str, target_lang: str
+    ) -> str:
+        """
+        Add a translation notice to the markdown content after any frontmatter block.
+
+        Args:
+            content: The translated markdown content
+            source_lang: Source language code
+            target_lang: Target language code
+
+        Returns:
+            Modified content with translation notice
+        """
+
+        # Check if theme has certain features
+        # has_tabs = config.theme.has_feature("tabs")
+
+        # Customize translation notice based on theme
+        if self.theme_name == "material":
+            # Use Material for MkDocs admonitions
+            notice_format = "\n!!! note\n    This document was automatically translated from {source_lang} to {target_lang}.\n\n"
+        else:
+            # Use generic notice format
+            notice_format = "\n>NOTE:\nThis document was automatically translated from {source_lang} to {target_lang}.\n\n"
+
+        # Use the theme-specific notice format
+        translation_notice = notice_format.format(
+            source_lang=source_lang.upper(), target_lang=target_lang.upper()
+        )
+
+        # Check if content has frontmatter (enclosed by ---)
+        frontmatter_match = re.match(r"^---\n.*?\n---\n", content, re.DOTALL)
+
+        if frontmatter_match:
+            # Insert notice after frontmatter
+            frontmatter = frontmatter_match.group(0)
+            content_after_frontmatter = content[len(frontmatter) :]
+            return frontmatter + translation_notice + content_after_frontmatter
+        else:
+            # No frontmatter, add notice at the top
+            return translation_notice + content
 
     def on_pre_build(self, config):
         """Translate files before build process starts"""
@@ -90,17 +134,38 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
                             f"[🔥] Translating {rel_filepath.name} to {target_filepath.name}..."
                         )
                         source_content = filepath.read_text(encoding="utf-8")
+                        source_lang = i18n_plugin.default_language
+                        target_lang = lang
+
                         translated_content = translate_content(
                             config=self.config,
                             content=source_content,
-                            source_lang=i18n_plugin.default_language,
-                            target_lang=lang,
+                            source_lang=source_lang,
+                            target_lang=target_lang,
                         )
 
                         if translated_content:
+                            # Add translation notice to the content
+                            translated_content_with_notice = (
+                                self.add_translation_notice(
+                                    translated_content,
+                                    source_lang=source_lang,
+                                    target_lang=target_lang,
+                                )
+                            )
+
+                            # Write the modified content to the file
                             new_path = filepath.parent / target_filename
-                            new_path.write_text(translated_content, encoding="utf-8")
+                            new_path.write_text(
+                                translated_content_with_notice, encoding="utf-8"
+                            )
                         else:
                             logger.warning(
                                 f"Translation failed for {rel_filepath.name} to {target_filename}"
                             )
+
+    def on_config(self, config):
+        """Store configuration settings for later use"""
+        self.theme_name = config.theme.name
+        logger.debug(f"Configured with theme: {self.theme_name}")
+        return config
