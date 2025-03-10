@@ -53,7 +53,32 @@ This should install some requirements. See [`pyproject.toml`](https://github.com
 - Activate the `i18n` plugin
 - Set the languages for your project in [`mkdocs.yml`](https://github.com/tombreit/mkdocs-translate-plugin/blob/main/mkdocs.yml)
 - Your primary/source language markdown files must be named like `<filename>.<languagecode>.md`, eg: `setup.en.md`
-- Set the translation service in `mkdocs.yml`
+- Set your primary/source language in your `mkdocs.yml` via `default: True` attribute:
+
+    ```yml
+    plugins:
+      - i18n:
+          docs_structure: suffix
+          languages:
+            - locale: en
+              default: true
+              name: English
+              build: true
+            - locale: de
+              name: Deutsch
+              build: true
+    ```
+
+- Set the translation service in `mkdocs.yml`:
+
+    ```yml
+      plugins:
+        - translate:
+          # Currently supported translation services: chatai, deepl, simpleen
+          translation_service: chatai
+          translation_service_api_key: !ENV TRANSLATION_SERVICE_API_KEY
+    ```
+
 - Provide the API key as an environment variable, eg: `export TRANSLATION_SERVICE_API_KEY=secret`
 
 ## Behind the scenes
@@ -84,7 +109,6 @@ This should install some requirements. See [`pyproject.toml`](https://github.com
     ```sh
     export TRANSLATION_SERVICE_API_KEY=secret
     ```
-
 
 1. Validate current EN-only docs
 

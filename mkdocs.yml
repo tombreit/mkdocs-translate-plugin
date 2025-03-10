@@ -19,8 +19,14 @@ plugins:
           name: English
           build: true
         - locale: de
+          # default: true
           name: Deutsch
           build: true
         # - locale: fr
         #   name: Francais
         #   build: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
