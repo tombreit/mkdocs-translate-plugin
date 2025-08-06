@@ -24,7 +24,7 @@ I don't get it: What does this plugin do?
 
 - Translates the markdown files in your MkDocs project from your primary language into your desired target languages
 - Processes `.md` files, eg:  `<filename>.en.md` → `<filename>.<language>.md`
-- Supports **DeepL**, **Academiccloud.de / LLama** and **Simpleen**
+- Supports **DeepL**, **GWDG SAIA API** and **Simpleen**
 - Creates a translation only if it does not yet exist
 - Tries - and often fails - to preserve the original markdown formatting. If you have any idea how I can improve this, please let me know.
 - Runs only on the MkDocs `build` command so as not to waste your translation provider/service API contingent
@@ -102,7 +102,7 @@ This should install some requirements. See [`pyproject.toml`](https://github.com
 1. Get an API key for a supported translation provider:
     - [Simpleen (Free Plan) API key](https://simpleen.io/signup)
     - [DeepL API](https://www.deepl.com/en/pro#developer)
-    - [Academic Cloud AI chatbot](https://academiccloud.de/services/chatai/)
+    - [SAIA (Scalable Artificial Intelligence (AI) Accelerator of GWDG)](https://docs.hpc.gwdg.de/services/saia/)
 
 1. Export the API key as an environment variable and set corresponding translation provider (see Configuration section above):
 
