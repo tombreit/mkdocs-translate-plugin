@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2024 Thomas Breitner
+# SPDX-FileCopyrightText: Thomas Breitner
 #
 # SPDX-License-Identifier: MIT
 
@@ -6,21 +6,24 @@
 MkDocs Translate Plugin
 """
 
+import logging
+import re
 from pathlib import Path
 from typing import Literal
-import re
 
 import mkdocs
+from mkdocs.plugins import get_plugin_logger
 
 from .translation_services import translate_content
 
 
-logger = mkdocs.plugins.get_plugin_logger(__name__)
+logger = get_plugin_logger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 class TranslatePluginConfig(mkdocs.config.base.Config):
     translation_service = mkdocs.config.config_options.Choice(
-        choices=["simpleen", "deepl", "chatai"]
+        choices=["saia", "deepl", "simpleen"]
     )
     translation_service_api_key = mkdocs.config.config_options.Type(str)
 
@@ -131,7 +134,7 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
                         )
                     else:
                         logger.info(
-                            f"[🔥] Translating {rel_filepath.name} to {target_filepath.name}..."
+                            f"🔥 Translating {rel_filepath.name} to {target_filepath.name}..."
                         )
                         source_content = filepath.read_text(encoding="utf-8")
                         source_lang = i18n_plugin.default_language
@@ -142,6 +145,7 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
                             content=source_content,
                             source_lang=source_lang,
                             target_lang=target_lang,
+                            logger=logger,
                         )
 
                         if translated_content:
