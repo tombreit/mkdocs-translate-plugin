@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: Thomas Breitner
+#
+# SPDX-License-Identifier: EUPL-1.2
+
+version = 1
+
+
+[[annotations]]
+path = "docs/**"
+SPDX-FileCopyrightText = "Thomas Breitner"
+SPDX-License-Identifier = "CC0-1.0"
