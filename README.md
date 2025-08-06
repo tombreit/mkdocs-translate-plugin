@@ -74,8 +74,9 @@ This should install some requirements. See [`pyproject.toml`](https://github.com
     ```yml
       plugins:
         - translate:
-          # Currently supported translation services: chatai, deepl, simpleen
-          translation_service: chatai
+          # Currently supported translation services:
+          # saia, deepl, simpleen
+          translation_service: saia
           translation_service_api_key: !ENV TRANSLATION_SERVICE_API_KEY
     ```
 
