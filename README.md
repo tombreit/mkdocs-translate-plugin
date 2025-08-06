@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2024 Thomas Breitner
+SPDX-FileCopyrightText: Thomas Breitner
 
 SPDX-License-Identifier: MIT
 -->

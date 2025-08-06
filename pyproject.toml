@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2024 Thomas Breitner
+# SPDX-FileCopyrightText: Thomas Breitner
 #
 # SPDX-License-Identifier: MIT
 
@@ -37,8 +37,22 @@ dependencies = [
     "markdownify",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "reuse",
+    "ruff",
+]
+
 [project.entry-points."mkdocs.plugins"]
 translate = "mkdocs_translate_plugin.plugin:TranslatePlugin"
 
+[project.urls]
+Homepage = "https://tombreit.github.io/mkdocs-pagetree-plugin/"
+Documentation = "https://github.com/tombreit/mkdocs-pagetree-plugin/blob/main/README.md"
+Repository = "https://github.com/tombreit/mkdocs-pagetree-plugin"
+Issues = "https://github.com/tombreit/mkdocs-pagetree-plugin/issues"
+
 [tool.setuptools]
 license-files = ["LICENSES/*.txt"]
+
