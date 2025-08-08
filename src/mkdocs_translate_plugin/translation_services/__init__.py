@@ -3,11 +3,11 @@
 # SPDX-License-Identifier: MIT
 
 import importlib
-from mkdocs.plugins import PrefixedLogger
+import logging
 
 
 def translate_content(
-    config, content: str, source_lang: str, target_lang: str, logger: PrefixedLogger
+    config, content: str, source_lang: str, target_lang: str, logger: logging.Logger
 ) -> str:
     """
     Translate content using the configured service.
