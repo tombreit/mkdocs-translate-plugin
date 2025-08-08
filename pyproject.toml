@@ -12,7 +12,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mkdocs-translate-plugin"
-version = "0.0.1"
+version = "0.0.2"
 description = "MkDocs plugin that does the translation of your markdown pages for you"
 authors = [{name = "Thomas Breitner", email = "mail@thms.de"},]
 license = {file = "LICENSES/MIT.txt"}
