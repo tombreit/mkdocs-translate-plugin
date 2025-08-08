@@ -15,7 +15,8 @@ from mkdocs.plugins import PrefixedLogger
 # mistral-large-instruct: Good overall performance, coding and multilingual reasoning
 # qwen3-32b: Good overall performance, multilingual, global affairs, logic
 # qwen3-235b-a22b: Great overall performance, reasoning
-LLM = "qwen3-32b"
+# openai-gpt-oss-120b
+LLM = "openai-gpt-oss-120b"
 
 
 def translate_with_saia(
@@ -98,10 +99,12 @@ def translate_with_saia(
         )
 
         duration = time.time() - start_time  # End timing
-        logger.info(f"API response time: {duration:.2f} seconds")
+        logger.debug(f"API response time: {duration:.2f} seconds")
 
         translated_text = chat_completion.choices[0].message.content
         logger.debug(f"Successfully translated with model: {LLM}")
+
+        logger.info(f"✅ LLM: {LLM}; Duration: {duration:.2f} seconds;")
 
     except Exception as e:
         error_msg = f"Error with model {LLM}: {str(e)}"

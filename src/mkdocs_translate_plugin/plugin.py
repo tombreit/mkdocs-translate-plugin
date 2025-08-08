@@ -6,19 +6,14 @@
 MkDocs Translate Plugin
 """
 
-import logging
 import re
 from pathlib import Path
 from typing import Literal
 
 import mkdocs
-from mkdocs.plugins import get_plugin_logger
 
+from .log import logger
 from .translation_services import translate_content
-
-
-logger = get_plugin_logger(__name__)
-logger.setLevel(logging.DEBUG)
 
 
 class TranslatePluginConfig(mkdocs.config.base.Config):
