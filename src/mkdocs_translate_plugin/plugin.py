@@ -122,6 +122,7 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
                         source_language_suffix, target_suffix
                     )
                     target_filepath = filepath.parent / target_filename
+                    target_filepath = target_filepath.relative_to(docs_dir.parent)
 
                     if target_filepath.exists():
                         logger.info(
@@ -129,7 +130,7 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
                         )
                     else:
                         logger.info(
-                            f"🔥 Translating {rel_filepath.name} to {target_filepath.name}..."
+                            f"🔥 Translating {rel_filepath} to {target_filepath}..."
                         )
                         source_content = filepath.read_text(encoding="utf-8")
                         source_lang = i18n_plugin.default_language
