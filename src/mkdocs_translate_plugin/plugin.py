@@ -32,11 +32,17 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
     ) -> None:
         self.is_serve = command == "serve"
 
-    def add_translation_notice(
+    def _add_translation_notice(
         self, content: str, source_lang: str, target_lang: str
     ) -> str:
         """
-        Add a translation notice to the markdown content after any frontmatter block.
+        Add a translation notice to the markdown content after first level 1 header
+        Previously we added it after the frontmatter, but that broke
+        MkDocs logic to determine the document title:
+        > The "title" to use for the document.
+        > A level 1 Markdown header on the first line of the document body.
+        https://www.mkdocs.org/user-guide/writing-your-docs/#meta-data
+        So we need to add the notice after the first level 1 header.
 
         Args:
             content: The translated markdown content
@@ -64,15 +70,16 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
         )
 
         # Check if content has frontmatter (enclosed by ---)
-        frontmatter_match = re.match(r"^---\n.*?\n---\n", content, re.DOTALL)
+        # notice_anchor_match = re.match(r"^---\n.*?\n---\n", content, re.DOTALL)
+        notice_anchor_match = re.match(r"^# .+\n", content)  # Use level 1 heading
 
-        if frontmatter_match:
-            # Insert notice after frontmatter
-            frontmatter = frontmatter_match.group(0)
-            content_after_frontmatter = content[len(frontmatter) :]
-            return frontmatter + translation_notice + content_after_frontmatter
+        if notice_anchor_match:
+            # Insert notice after notice_anchor_match
+            anchor = notice_anchor_match.group(0)
+            content_after_anchor = content[len(anchor) :]
+            return anchor + translation_notice + content_after_anchor
         else:
-            # No frontmatter, add notice at the top
+            # No anchor, add notice at the top
             return translation_notice + content
 
     def on_pre_build(self, config):
@@ -147,7 +154,7 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
                         if translated_content:
                             # Add translation notice to the content
                             translated_content_with_notice = (
-                                self.add_translation_notice(
+                                self._add_translation_notice(
                                     translated_content,
                                     source_lang=source_lang,
                                     target_lang=target_lang,
