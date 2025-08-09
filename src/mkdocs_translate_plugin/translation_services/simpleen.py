@@ -11,6 +11,8 @@ def translate_with_simpleen(
     config, content, source_lang, target_lang, logger: logging.Logger
 ):
     """Translate content using Simpleen API"""
+    logger.warning("Simpleen translation service is untestet.")
+
     translated_text = None
 
     url = f"https://api.simpleen.io/translate?auth_key={config.translation_service_api_key}"

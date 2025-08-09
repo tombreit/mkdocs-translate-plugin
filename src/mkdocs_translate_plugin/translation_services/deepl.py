@@ -16,6 +16,8 @@ def translate_with_deepl(
     Translate markdown content using DeepL API with HTML round-tripping
     to preserve formatting.
     """
+    logger.warning("DeepL translation service is largely untestet.")
+
     # Convert markdown (including frontmatter) to HTML
     try:
         html_content = markdown(
