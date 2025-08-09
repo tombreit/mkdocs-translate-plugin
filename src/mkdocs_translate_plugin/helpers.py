@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: MIT
 
 import re
+from typing import Optional
+
 
 notice_formats = {
     "material": "\n!!! note\n    This document was automatically translated from {source_lang} to {target_lang}.\n\n",
@@ -37,3 +39,46 @@ def add_translation_notice(
 
     # 3. Otherwise, insert at the very top
     return translation_notice + content
+
+
+def code_block_transform(
+    content: str, code_blocks: Optional[list[str]] = None, mode: str = "protect"
+) -> str | tuple[str, list[str]]:
+    """
+    Protect or restore code blocks in markdown content.
+
+    Perhaps this would be simpler as a good system prompt...
+
+    - In 'protect' mode: replaces code blocks with placeholders and returns (content_with_placeholders, code_blocks).
+    - In 'restore' mode: replaces placeholders in content with code_blocks and returns the restored content.
+
+    Args:
+        content: The markdown content.
+        code_blocks: The list of code blocks (required for 'restore' mode).
+        mode: 'protect' or 'restore'.
+
+    Returns:
+        In 'protect' mode: (content_with_placeholders, code_blocks)
+        In 'restore' mode: restored_content
+    """
+    pattern = r"```[a-z]*\n[\s\S]*?\n```"
+
+    if mode == "protect":
+        code_blocks = []
+
+        def replace_code_block(match):
+            code_blocks.append(match.group(0))
+            return f"CODEBLOCK_{len(code_blocks) - 1}_PLACEHOLDER"
+
+        content_with_placeholders = re.sub(pattern, replace_code_block, content)
+        return content_with_placeholders, code_blocks
+
+    elif mode == "restore":
+        if code_blocks is None:
+            raise ValueError("code_blocks must be provided in restore mode")
+        for i, block in enumerate(code_blocks):
+            content = content.replace(f"CODEBLOCK_{i}_PLACEHOLDER", block)
+        return content
+
+    else:
+        raise ValueError("mode must be 'protect' or 'restore'")

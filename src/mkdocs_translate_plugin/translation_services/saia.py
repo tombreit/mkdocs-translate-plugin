@@ -7,6 +7,8 @@ import time
 import logging
 from openai import OpenAI
 
+from ..helpers import code_block_transform
+
 
 # SAIA supported models
 # https://docs.hpc.gwdg.de/services/chat-ai/models/index.html
@@ -38,15 +40,9 @@ def translate_with_saia(
     )
 
     # Protect code blocks before translation
-    code_blocks = []
-    pattern = r"```[a-z]*\n[\s\S]*?\n```"
-
-    def replace_code_block(match):
-        code_blocks.append(match.group(0))
-        return f"CODEBLOCK_{len(code_blocks) - 1}_PLACEHOLDER"
-
-    # Replace code blocks with placeholders
-    content_with_placeholders = re.sub(pattern, replace_code_block, content)
+    content_with_placeholders, code_blocks = code_block_transform(
+        content, mode="protect"
+    )
 
     # System prompt for precise instructions
     system_prompt = (
@@ -121,9 +117,12 @@ def translate_with_saia(
         translated_text = translated_text.replace(reasoning_match.group(0), "")
         logger.info(f"Extracted reasoning: {reasoning_match.group(1)}")
 
-    # Restore code blocks
-    for i, block in enumerate(code_blocks):
-        translated_text = translated_text.replace(f"CODEBLOCK_{i}_PLACEHOLDER", block)
+    # Restore code blocks in the translated content
+    translated_text = code_block_transform(
+        translated_text,
+        code_blocks if isinstance(code_blocks, list) else None,
+        mode="restore",
+    )
 
     # Additional verification of markdown integrity
     expected_elements = {
