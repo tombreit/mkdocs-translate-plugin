@@ -7,7 +7,7 @@ import time
 import logging
 from openai import OpenAI
 
-from ..helpers import code_block_transform
+from ..helpers import check_markdown_integrity, protect_code_blocks, restore_code_blocks
 
 
 # SAIA supported models
@@ -40,9 +40,7 @@ def translate_with_saia(
     )
 
     # Protect code blocks before translation
-    content_with_placeholders, code_blocks = code_block_transform(
-        content, mode="protect"
-    )
+    content_with_placeholders, code_blocks = protect_code_blocks(content)
 
     # System prompt for precise instructions
     system_prompt = (
@@ -108,7 +106,7 @@ def translate_with_saia(
         errors.append(error_msg)
 
     if translated_text is None:
-        logger.error(f"All translation attempts failed: {'; '.join(errors)}")
+        logger.error(f"Translation attempt failed: {'; '.join(errors)}")
         return ""
 
     # If there is a reasoning or explanation, drop it. This ouput is enclosed in `<think></think>` tags.
@@ -118,30 +116,9 @@ def translate_with_saia(
         logger.info(f"Extracted reasoning: {reasoning_match.group(1)}")
 
     # Restore code blocks in the translated content
-    translated_text = code_block_transform(
-        translated_text,
-        code_blocks if isinstance(code_blocks, list) else None,
-        mode="restore",
-    )
+    translated_text = restore_code_blocks(translated_text, code_blocks)
 
-    # Additional verification of markdown integrity
-    expected_elements = {
-        "headers": len(re.findall(r"^#+\s", content, re.MULTILINE)),
-        "code_blocks": len(re.findall(r"```", content)) // 2,
-        "links": len(re.findall(r"\[.+?\]\(.+?\)", content)),
-    }
-
-    actual_elements = {
-        "headers": len(re.findall(r"^#+\s", translated_text, re.MULTILINE)),
-        "code_blocks": len(re.findall(r"```", translated_text)) // 2,
-        "links": len(re.findall(r"\[.+?\]\(.+?\)", translated_text)),
-    }
-
-    # Log if there's a mismatch in markdown elements
-    if expected_elements != actual_elements:
-        logger.warning(
-            f"Possible markdown corruption detected. "
-            f"Expected: {expected_elements}, Got: {actual_elements}"
-        )
+    # Check markdown integrity
+    check_markdown_integrity(content, translated_text, logger)
 
     return translated_text.strip()

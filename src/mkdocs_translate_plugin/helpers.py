@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: MIT
 
 import re
-from typing import Optional
+import logging
+from typing import Optional, List, Tuple
 
 
 notice_formats = {
@@ -82,3 +83,69 @@ def code_block_transform(
 
     else:
         raise ValueError("mode must be 'protect' or 'restore'")
+
+
+def protect_code_blocks(content: str) -> Tuple[str, List[str]]:
+    """
+    Replace code blocks in markdown with placeholders.
+    Returns the modified content and a list of code blocks.
+    """
+    code_blocks = []
+    pattern = r"```[a-z]*\n[\s\S]*?\n```"
+
+    def replace_code_block(match):
+        code_blocks.append(match.group(0))
+        return f"CODEBLOCK_{len(code_blocks) - 1}_PLACEHOLDER"
+
+    content_with_placeholders = re.sub(pattern, replace_code_block, content)
+    return content_with_placeholders, code_blocks
+
+
+def restore_code_blocks(content: str, code_blocks: List[str]) -> str:
+    """
+    Replace code block placeholders in content with the original code blocks.
+    """
+    for i, block in enumerate(code_blocks):
+        content = content.replace(f"CODEBLOCK_{i}_PLACEHOLDER", block)
+    return content
+
+
+def check_markdown_integrity(
+    source: str, translated: str, logger: logging.Logger
+) -> None:
+    """
+    Compare markdown element counts in the source and translated content.
+    Logs a warning if there is any discrepancy.
+
+    Args:
+        source: The original markdown content.
+        translated: The translated markdown content.
+        logger: A logger instance to log warnings.
+    """
+    # Mapping: key -> (pattern, flags, divisor)
+    # The divisor is used to adjust counts for specific elements like code blocks
+    # that have an opening and closing fence, hence counted twice.
+    element_definitions = {
+        "headers": (r"^#+\s", re.MULTILINE, 1),
+        "code_blocks": (
+            r"```",
+            0,
+            2,
+        ),  # count divided by 2, since each block gives two matches
+        "links": (r"\[.+?\]\(.+?\)", 0, 1),
+    }
+
+    expected_elements = {}
+    actual_elements = {}
+
+    for key, (pattern, flags, divisor) in element_definitions.items():
+        exp_count = len(re.findall(pattern, source, flags))
+        act_count = len(re.findall(pattern, translated, flags))
+        # Adjust count if needed
+        expected_elements[key] = exp_count // divisor
+        actual_elements[key] = act_count // divisor
+
+    if expected_elements != actual_elements:
+        logger.warning(
+            f"Possible markdown corruption detected. Expected: {expected_elements}, Got: {actual_elements}"
+        )
