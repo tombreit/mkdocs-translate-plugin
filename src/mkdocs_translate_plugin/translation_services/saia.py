@@ -4,8 +4,8 @@
 
 import re
 import time
+import logging
 from openai import OpenAI
-from mkdocs.plugins import PrefixedLogger
 
 
 # SAIA supported models
@@ -20,7 +20,7 @@ LLM = "openai-gpt-oss-120b"
 
 
 def translate_with_saia(
-    config, content: str, source_lang: str, target_lang: str, logger: PrefixedLogger
+    config, content: str, source_lang: str, target_lang: str, logger: logging.Logger
 ) -> str:
     """
     Translate markdown content using an OpenAI-compatible API while preserving formatting.

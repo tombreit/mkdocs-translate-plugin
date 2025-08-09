@@ -4,11 +4,11 @@
 
 import json
 import requests
-from mkdocs.plugins import PrefixedLogger
+import logging
 
 
 def translate_with_simpleen(
-    config, content, source_lang, target_lang, logger: PrefixedLogger
+    config, content, source_lang, target_lang, logger: logging.Logger
 ):
     """Translate content using Simpleen API"""
     translated_text = None

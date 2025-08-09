@@ -2,16 +2,15 @@
 #
 # SPDX-License-Identifier: MIT
 
+import logging
 import deepl
 from markdown import markdown
 from markdownify import markdownify as md
-
 # import pypandoc
-from mkdocs.plugins import PrefixedLogger
 
 
 def translate_with_deepl(
-    config, content: str, source_lang: str, target_lang: str, logger: PrefixedLogger
+    config, content: str, source_lang: str, target_lang: str, logger: logging.Logger
 ) -> str:
     """
     Translate markdown content using DeepL API with HTML round-tripping
