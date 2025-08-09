@@ -13,7 +13,7 @@ from ..helpers import check_markdown_integrity, protect_code_blocks, restore_cod
 # SAIA supported models
 # https://docs.hpc.gwdg.de/services/chat-ai/models/index.html
 
-# teuken-7b-instruct-research: European languages
+# teuken-7b-instruct-research: European languages, but bad at preserving markdown formatting
 # mistral-large-instruct: Good overall performance, coding and multilingual reasoning
 # qwen3-32b: Good overall performance, multilingual, global affairs, logic
 # qwen3-235b-a22b: Great overall performance, reasoning
