@@ -42,6 +42,9 @@ dev = [
     "pre-commit",
     "reuse",
     "ruff",
+    "mypy",
+    "types-requests",
+    "types-Markdown",
 ]
 test = [
     "pytest"
@@ -58,4 +61,3 @@ Issues = "https://github.com/tombreit/mkdocs-pagetree-plugin/issues"
 
 [tool.setuptools]
 license-files = ["LICENSES/*.txt"]
-

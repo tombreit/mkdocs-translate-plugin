@@ -10,6 +10,8 @@ from pathlib import Path
 from typing import Literal
 
 import mkdocs
+from mkdocs.plugins import BasePlugin
+from mkdocs.config.defaults import MkDocsConfig
 
 from .log import logger
 from .helpers import add_translation_notice
@@ -20,10 +22,12 @@ class TranslatePluginConfig(mkdocs.config.base.Config):
     translation_service = mkdocs.config.config_options.Choice(
         choices=["saia", "deepl", "simpleen"]
     )
-    translation_service_api_key = mkdocs.config.config_options.Type(str)
+    # Making translation_service_api_key optional allow running in CI/CD
+    # environments without an API key.
+    translation_service_api_key = mkdocs.config.config_options.Type(str, default="")
 
 
-class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
+class TranslatePlugin(BasePlugin[TranslatePluginConfig]):
     def __init__(self):
         self.is_serve = False
 
@@ -32,7 +36,13 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
     ) -> None:
         self.is_serve = command == "serve"
 
-    def on_pre_build(self, config):
+    def on_config(self, config: MkDocsConfig, **kwargs) -> MkDocsConfig:
+        """Store configuration settings for later use"""
+        self.theme_name = config.theme.name or "mkdocs"  # "mkdocs" is the default theme
+        logger.debug(f"Configured with theme: {self.theme_name}")
+        return config
+
+    def on_pre_build(self, config: MkDocsConfig, **kwargs) -> None:
         """Translate files before build process starts"""
 
         if self.is_serve:
@@ -41,11 +51,21 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
             )
             return
 
+        if not self.config.translation_service_api_key:
+            logger.info("🤷 No API key provided. Skipping translation.")
+            return
+
         # Current run language. The mkdocs-static-i18n processes the
         # on_pre_build hook for each language, but we only neet to
         # trigger the translation for the default source language.
         i18n_plugin = config.plugins.get("i18n")
         current_language = config.theme.get("language")
+
+        if not i18n_plugin or not hasattr(i18n_plugin, "default_language"):
+            logger.warning(
+                "i18n plugin is not configured or missing 'default_language'. Skipping translation."
+            )
+            return
 
         if current_language != i18n_plugin.default_language:
             logger.debug(
@@ -119,9 +139,3 @@ class TranslatePlugin(mkdocs.plugins.BasePlugin[TranslatePluginConfig]):
                             logger.warning(
                                 f"Translation failed for {rel_filepath.name} to {target_filename}"
                             )
-
-    def on_config(self, config):
-        """Store configuration settings for later use"""
-        self.theme_name = config.theme.name
-        logger.debug(f"Configured with theme: {self.theme_name}")
-        return config

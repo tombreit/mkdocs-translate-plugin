@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import logging
+from typing import cast
 import deepl
 from markdown import markdown
 from markdownify import markdownify as md
@@ -47,6 +48,10 @@ def translate_with_deepl(
             # split_sentences="nonewlines",
         )
 
+        # deepl.Translator.translate_text() can return either a single
+        # TextResult or a list of TextResult objects, depending on the input.
+        # Tell mypy this is always a TextResult, not a list
+        result = cast(deepl.TextResult, result)
         translated_html = result.text
         print(f"{translated_html=}")
 
