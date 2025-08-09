@@ -43,6 +43,9 @@ dev = [
     "reuse",
     "ruff",
 ]
+test = [
+    "pytest"
+]
 
 [project.entry-points."mkdocs.plugins"]
 translate = "mkdocs_translate_plugin.plugin:TranslatePlugin"
