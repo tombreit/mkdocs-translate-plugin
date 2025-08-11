@@ -31,22 +31,20 @@ I don't get it: What does this plugin do?
 - Get some verbose info by running `mkdocs --verbose build`
 - tbc
 
-## Install
+## Hints
 
-*Currently only available via it's git repository.*
+- This plugin will never modify an existing file, neither your default language files nor files that have already been translated – either by you or by the plugin. It only searches for missing translations and adds them.
+- If you need to translate a document again, delete the existing translated document manually and let this plugin do its work again.
 
-```bash
-# Initial install:
-python -m pip install \
-  'mkdocs-translate-plugin @ git+https://github.com/tombreit/mkdocs-translate-plugin'
+## Requirements
 
-# Upgrade plugin:
-python -m pip install \
-  --upgrade --no-deps --force-reinstall \
-  'mkdocs-translate-plugin @ git+https://github.com/tombreit/mkdocs-translate-plugin'
-```
+- An API key for any of the supported translation services.
 
-This should install some requirements. See [`pyproject.toml`](https://github.com/tombreit/mkdocs-translate-plugin/blob/main/pyproject.toml) for details.
+## Behind the scenes
+
+- Uses - obviously - [MkDocs](https://www.mkdocs.org/)
+- Uses [mkdocs-static-i18n](https://ultrabug.github.io/mkdocs-static-i18n/) to "compile" different languages
+- Could use [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) to provide a theme with a language switcher
 
 ## Configuration
 
@@ -82,13 +80,7 @@ This should install some requirements. See [`pyproject.toml`](https://github.com
 
 - Provide the API key as an environment variable, eg: `export TRANSLATION_SERVICE_API_KEY=secret`
 
-## Behind the scenes
-
-- Uses - obviously - [MkDocs](https://www.mkdocs.org/)
-- Uses [mkdocs-static-i18n](https://ultrabug.github.io/mkdocs-static-i18n/) to "compile" different languages
-- Uses [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) to provide a theme with a language switcher
-
-## Try it
+## Try this demo project
 
 1. Setup plugin and demo project locally
 
@@ -146,3 +138,20 @@ This should install some requirements. See [`pyproject.toml`](https://github.com
     ```bash
     mkdocs serve
     ```
+
+## Install
+
+*Currently only available via it's git repository.*
+
+```bash
+# Initial install:
+python -m pip install \
+  'mkdocs-translate-plugin @ git+https://github.com/tombreit/mkdocs-translate-plugin'
+
+# Upgrade plugin:
+python -m pip install \
+  --upgrade --no-deps --force-reinstall \
+  'mkdocs-translate-plugin @ git+https://github.com/tombreit/mkdocs-translate-plugin'
+```
+
+This should install some requirements. See [`pyproject.toml`](https://github.com/tombreit/mkdocs-translate-plugin/blob/main/pyproject.toml) for details.
