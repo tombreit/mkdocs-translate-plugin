@@ -69,7 +69,7 @@ class TranslatePlugin(BasePlugin[TranslatePluginConfig]):
 
         if current_language != i18n_plugin.default_language:
             logger.debug(
-                f"Skipping on_pre_build hook: language '{current_language}' is not default language '{i18n_plugin.default_language}'"
+                f"Skipping on_pre_build hook for language '{current_language}': is not source language '{i18n_plugin.default_language}'"
             )
             return
 
