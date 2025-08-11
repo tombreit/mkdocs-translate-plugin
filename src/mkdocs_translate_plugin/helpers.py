@@ -8,7 +8,7 @@ from typing import Optional, List, Tuple
 
 
 notice_formats = {
-    "material": "\n!!! note\n    This document was automatically translated from {source_lang} to {target_lang}.\n\n",
+    "material": '\n!!! note "This document was automatically translated from {source_lang} to {target_lang}."\n\n',
     "default": "\n>NOTE:\nThis document was automatically translated from {source_lang} to {target_lang}.\n\n",
 }
 
